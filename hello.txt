@@ -1,3 +1,2 @@
 Hello world!
-Nothing to do
-I will be fired quick
+The world is also good!
