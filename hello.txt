@@ -1,2 +1,4 @@
-Hello world!
-The world is also good!
+/var/camiant/log/mra.log:2021-03-30 02:57:00.100 WARN   [DRABindingCleanupAbsoluteScheduler:Thread-49] mra.model.DRABindingCleanupTask.cleanupDb:169 - Starting DRABinding cleanup... 
+/var/camiant/log/mra.log:2021-03-30 02:57:00.105 INFO   [DRABindingCleanupAbsoluteScheduler:Thread-49] mra.model.DRABindingCleanupTask.buildList:388 - Completed Diameter session cleanup. 
+/var/camiant/log/mra.log:2021-03-30 02:57:00.105 INFO   [DRABindingCleanupAbsoluteScheduler:Thread-49] mra.model.DRABindingCleanupTask.cleanupDb:213 - Finished iterating the database, pass # 1 in 1 ms. Starting to clean 0 sessions/bindings for the current pass ... 
+/var/camiant/log/mra.log:2021-03-30 02:57:10.105 WARN   [DRABindingCleanupAbsoluteScheduler:Thread-49] mra.model.DRABindingCleanupTask.cleanupDb:292 - Completed DRABinding cleanup. 

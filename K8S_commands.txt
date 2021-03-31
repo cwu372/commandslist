@@ -1,0 +1,53 @@
+kubectl get ns -A 
+kubectl get all -n sus-pcf
+kubectl delete PersistentVolume 
+kubectl delete namespace 
+
+sed -i 's/slaveNodeName:.*/slaveNodeName: node10/g' exporter-custom-values.yaml 
+sed -i 's/interval:.*/interval: "24"/g' exporter-custom-values.yaml 
+sed -i 's/elasticSearchURL:.*/elasticSearchURL: "http:\/\/elasticsearch-client.efk:9200"/g' exporter-custom-values.yaml 
+sed -i 's/prometheusURL:.*/prometheusURL: "http:\/\/prometheus-server.infra:5806" /g' exporter-custom-values.yaml 
+
+
+sed -i 's/inputPath:.*/inputPath: "\/tmp\/exported-data_2020-11-23_02:11:26" /g' loader-custom-values.yaml 
+
+Delete all resource based on namespace:
+kubectl delete all --all -n efk
+
+
+Get Deployment logs:
+./nfDataCapture.sh -n=ocnf-data-loader -s=10M -o=/tmp/
+
+Collect APP Svc logs:
+helm install ocnf-data-exporter/ --name ocnf-data-exporter --namespace ocnf-data-exporter -f exporter-custom-values.yaml
+helm status ocnf-data-exporter
+helm del --purge ocnf-data-exporter
+
+Load and check APP Svc logs:
+helm install ocnf-data-loader --name ocnf-data-loader --namespace ocnf-data-loader -f loader-custom-values.yaml
+helm status ocnf-data-loader
+helm del --purge ocnf-data-loader
+
+docker-registry.openstack.cn.oracle.com/kibana:7.8.1-fix
+docker-registry.openstack.cn.oracle.com/grafana:7.1.3
+docker-registry.openstack.cn.oracle.com/elasticsearch:7.8.1
+docker-registry.openstack.cn.oracle.com/jaegertracing:1.18.0
+docker-registry.openstack.cn.oracle.com/victoria-metrics:1.40.0
+
+Monitoring system for pre-loading
+helm install comer --name vict-grafa --namespace ocnf-data-loader
+helm status vict-grafa
+helm del --purge vict-grafa
+
+helm install --name fluentd-load kiwigrid/fluentd-elasticsearch --namespace ocnf-data-loader -f ztt/efk/values_fluentd.yaml
+helm install --name kibana-load elastic/kibana --namespace ocnf-data-loader -f ztt/efk/values_kibana.yaml
+helm install --name elasticsearch-client-load elastic/elasticsearch --namespace ocnf-data-loader -f ztt/efk/values_client.yaml
+helm install --name elasticsearch-master-load elastic/elasticsearch --namespace ocnf-data-loader -f ztt/efk/values_master.yaml
+helm install --name elasticsearch-data-load elastic/elasticsearch --namespace ocnf-data-loader -f ztt/efk/values_data.yaml
+
+helm install --name fluentd kiwigrid/fluentd-elasticsearch --namespace efk -f ztt/efk/values_fluentd.yaml
+helm install --name kibana elastic/kibana --namespace efk -f ztt/efk/values_kibana.yaml
+helm install --name elasticsearch-client elastic/elasticsearch --namespace efk -f ztt/efk/values_client.yaml
+helm install --name elasticsearch-master elastic/elasticsearch --namespace efk -f ztt/efk/values_master.yaml
+helm install --name elasticsearch-data elastic/elasticsearch --namespace efk -f ztt/efk/values_data.yaml
+

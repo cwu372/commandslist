@@ -1,0 +1,19 @@
+docker image rm --force docker-registry.openstack.cn.oracle.com/pcf_cli:0.0.3
+
+docker run -it -p 8080:8080 -p 5801:5801 -e JAEGER_SERVICE_NAME=smf_sim -e JAEGER_ENDPOINT="http://10.113.78.181:14271/api/traces" -e JAEGER_SAMPLER_TYPE=const -e JAEGER_SAMPLER_PARAM=1 --rm --entrypoint ./restcli.sh docker-registry.openstack.cn.oracle.com/pcf_cli:0.0.3
+
+connect -baseurl http://10.233.0.208:8000 -set app1.name=sm
+
+connect -baseurl http://10.113.78.181:30000/sm-service -set app1.name=sm (only send if apigw service is existing)
+
+start server -set app1.name=smf
+
+sm create -ipv6prefix=2800:a00:cc01:c056::/64 -ratt=NR -accesstype=3GPP_ACCESS -dnn=dnn1 -supi=imsi-451181000000008 -gpsi=msisdn-13100000008 -notifyuri=http://10.113.77.77:8080/smf/notify/ -set qos.ambrup="1 Mbps" -set qos.ambrdown="10 Mbps" -set subdefqos.5qi=9 -set subdefqos.prioritylevel=1 -set subdefqos.arp.preemptcap=NOT_PREEMPT -set subdefqos.arp.preemptvuln=PREEMPTABLE -set subdefqos.arp.prioritylevel=2 -set snssai.sst=11 -set snssai.sd=abc123 -set pdusessiontype=IPV6 -set servingnetwork.mcc=450 -set servingnetwork.mnc=08  -pdusessionid=1 -smpolicyid=888
+
+sm update -ratt=EUTRA -set servingnetwork.mcc=460 -set servingnetwork.mnc=09 -set events="PLMN_CH,RAT_TY_CH" -set qos.ambrup="100 Mbps" -set qos.ambrdown="1000 Mbps" -smpolicyid=888 --ingr
+sm delete -set uli.type=NR -set uli.mccmnc=40082 -seses
+t uli.tac=63F84B -set uli.nrcellid=ABACD0912 -set uli.age=1 -set uli.time=2019-01-15T15:20:50.52Z -set uli.geograph=10001AF9001BA801 -set uli.geodetic=001AF91BA80163DF15ED -set uli.ngenbid=SMacroNGeNB-F4B89 -smpolicyid=888
+
+sm get -smpolicyid=888
+
+sm delete -smpolicyid=888
